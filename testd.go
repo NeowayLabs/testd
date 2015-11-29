@@ -1,32 +1,41 @@
 package testd
 
 import (
+	"errors"
 	"io"
+	"io/ioutil"
 	"os/exec"
 	"testing"
 )
 
 type Testd struct {
-	t      *testing.T
-	daemon *exec.Cmd
-	output chan string
+	t       *testing.T
+	daemon  *exec.Cmd
+	output  chan []byte
+	logFile string
+	stopped bool
 }
 
 func (self *Testd) Stop() error {
+	if self.stopped {
+		return errors.New("already stopped")
+	}
 	err := self.daemon.Process.Kill()
 	if err != nil {
 		return err
 	}
-	//output := <-self.output
-	//TODO: Save logs
-	return nil
+	self.stopped = true
+	return ioutil.WriteFile(self.logFile, <-self.output, 666)
 }
 
-func New(t *testing.T, logsBaseDir string, name string, arg ...string) (*Testd, error) {
+func New(t *testing.T, logFile string, name string, arg ...string) (*Testd, error) {
+	t.Fail()
 	self := Testd{
-		t:      t,
-		output: make(chan string),
-		daemon: exec.Command(name, arg...),
+		t:       t,
+		output:  make(chan []byte),
+		daemon:  exec.Command(name, arg...),
+		logFile: logFile,
+		stopped: false,
 	}
 
 	stdout, err := self.daemon.StdoutPipe()
@@ -47,7 +56,7 @@ func New(t *testing.T, logsBaseDir string, name string, arg ...string) (*Testd, 
 	return &self, nil
 }
 
-func readDaemonOutput(stdout io.Reader, stderr io.Reader, output chan<- string) {
+func readDaemonOutput(stdout io.Reader, stderr io.Reader, output chan<- []byte) {
 	out := make([]byte, 0)
 	errOutput := make([]byte, 0)
 
@@ -70,5 +79,6 @@ func readDaemonOutput(stdout io.Reader, stderr io.Reader, output chan<- string) 
 			break
 		}
 	}
-	output <- "stdout:" + string(out) + "\n\nstderr:" + string(errOutput)
+
+	output <- append(out, errOutput...)
 }
