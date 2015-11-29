@@ -1,12 +1,22 @@
 # testd
 
-It is a library that makes easier to write tests that depends on runnings daemons/services.
+It is a library that makes easier to write integration tests that depends on runnings daemons/services.
 
-What do you mean with making it easier to write tests ? Here it goes a use case.
+If you are thinking about unit tests, this library will not help you with that.
+They are a good idea on a lot of cases, and it is not on scope of this document to
+argue about when it is better to write integration tests, instead of unit tests.
 
-## Blackbox testing a REST service
+When you found yourself needing to write integration tests, then you will need some stuff:
 
-Let's say you have a REST service and you want to test it, 
+* A way to start services
+* A way to stop then
+* A way to get the logs from the services
 
+Well, if you value deterministic tests, isolation will be your friend. One good way to get isolation is
+to start/stop a instance of the service on setup/teardown.
 
-## Queue testing
+Another thing that is important is the logs, if a test fails, why it failed ? On integration tests this
+is a little harder to get only by the last performed change (it is actually one of the drawbacks of integration
+tests, in comparison with unit tests).
+
+**testd** provides an easy way to do that, and just that :-).
