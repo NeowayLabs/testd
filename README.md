@@ -9,7 +9,7 @@ argue about when it is better to write integration tests, instead of unit tests.
 When you found yourself needing to write integration tests, then you will need some stuff:
 
 * A way to start services
-* A way to stop then
+* A way to stop them
 * A way to get the logs from the services
 
 Well, if you value deterministic tests, isolation will be your friend. One good way to get isolation is
