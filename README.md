@@ -20,3 +20,15 @@ is a little harder to get only by the last performed change (it is actually one 
 tests, in comparison with unit tests).
 
 **testd** provides an easy way to do that, and just that :-).
+
+
+## What would be the logs ?
+
+The logs are actually everything that the daemon sends to stdout and stderr. This fits
+well the same model used by docker, where services just send logs to stdout and the
+docker daemon (or some other daemon, like journald) captures it.
+
+
+## How to use it ?
+
+[Checkout the godocs documentation](TODO).
