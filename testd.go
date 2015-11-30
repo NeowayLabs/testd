@@ -4,7 +4,9 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
+	"os"
 	"os/exec"
+	"strings"
 	"testing"
 )
 
@@ -25,7 +27,15 @@ func (self *Testd) Stop() error {
 		return err
 	}
 	self.stopped = true
-	return ioutil.WriteFile(self.logFile, <-self.output, 666)
+
+	const READ_WRITE_ALL = 666
+
+	dirSeparatorIndex := strings.LastIndex(self.logFile, "/")
+	if dirSeparatorIndex != -1 {
+		logDir := self.logFile[0:dirSeparatorIndex]
+		os.MkdirAll(logDir, READ_WRITE_ALL)
+	}
+	return ioutil.WriteFile(self.logFile, <-self.output, READ_WRITE_ALL)
 }
 
 func New(t *testing.T, logFile string, name string, arg ...string) (*Testd, error) {
@@ -60,7 +70,7 @@ func readDaemonOutput(stdout io.Reader, stderr io.Reader, output chan<- []byte) 
 	out := make([]byte, 0)
 	errOutput := make([]byte, 0)
 
-	readMoreData := func(target *[]byte, source io.Reader) bool {
+	readOutput := func(target *[]byte, source io.Reader) bool {
 		r := make([]byte, 1024)
 		n, err := source.Read(r)
 		if n == 0 {
@@ -74,8 +84,8 @@ func readDaemonOutput(stdout io.Reader, stderr io.Reader, output chan<- []byte) 
 	}
 
 	for {
-		if !readMoreData(&out, stdout) &&
-			!readMoreData(&errOutput, stderr) {
+		if !readOutput(&out, stdout) &&
+			!readOutput(&errOutput, stderr) {
 			break
 		}
 	}
