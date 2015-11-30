@@ -7,11 +7,9 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"testing"
 )
 
 type Testd struct {
-	t       *testing.T
 	daemon  *exec.Cmd
 	output  chan []byte
 	logFile string
@@ -38,10 +36,8 @@ func (self *Testd) Stop() error {
 	return ioutil.WriteFile(self.logFile, <-self.output, READ_WRITE_ALL)
 }
 
-func New(t *testing.T, logFile string, name string, arg ...string) (*Testd, error) {
-	t.Fail()
+func New(logFile string, name string, arg ...string) (*Testd, error) {
 	self := Testd{
-		t:       t,
 		output:  make(chan []byte),
 		daemon:  exec.Command(name, arg...),
 		logFile: logFile,
