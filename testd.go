@@ -26,7 +26,7 @@ func (self *Testd) Stop() error {
 	}
 	self.stopped = true
 
-	const READ_WRITE_ALL = 666
+	const READ_WRITE_ALL = 0666
 
 	dirSeparatorIndex := strings.LastIndex(self.logFile, "/")
 	if dirSeparatorIndex != -1 {
