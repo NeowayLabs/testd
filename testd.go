@@ -26,14 +26,12 @@ func (self *Testd) Stop() error {
 	}
 	self.stopped = true
 
-	const READ_WRITE_ALL = 0666
-
 	dirSeparatorIndex := strings.LastIndex(self.logFile, "/")
 	if dirSeparatorIndex != -1 {
 		logDir := self.logFile[0:dirSeparatorIndex]
-		os.MkdirAll(logDir, READ_WRITE_ALL)
+		os.MkdirAll(logDir, os.ModeDir|os.ModePerm)
 	}
-	return ioutil.WriteFile(self.logFile, <-self.output, READ_WRITE_ALL)
+	return ioutil.WriteFile(self.logFile, <-self.output, os.ModePerm)
 }
 
 func New(logFile string, name string, arg ...string) (*Testd, error) {
