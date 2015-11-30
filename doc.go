@@ -1,6 +1,6 @@
 /*
 
-Library that makes easier to write integration tests that depends on runnings daemons/services.
+testd that makes easier to write integration tests that depends on runnings daemons/services.
 
 Example:
 
