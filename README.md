@@ -28,6 +28,8 @@ The logs are actually everything that the daemon sends to stdout and stderr. Thi
 well the same model used by docker, where services just send logs to stdout and the
 docker daemon (or some other daemon, like journald) captures it.
 
+With **testd** you will be able to chose where to save the logs.
+
 
 ## How to use it ?
 

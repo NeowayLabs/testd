@@ -10,36 +10,40 @@ import (
 )
 
 type Testd struct {
-	daemon  *exec.Cmd
-	output  chan []byte
-	logFile string
-	stopped bool
+	daemon      *exec.Cmd
+	output      chan []byte
+	logFilePath string
+	stopped     bool
 }
 
+// Stops the daemon, if it is not already not stopped
 func (self *Testd) Stop() error {
 	if self.stopped {
 		return errors.New("already stopped")
 	}
-	err := self.daemon.Process.Kill()
-	if err != nil {
-		return err
-	}
+	self.daemon.Process.Kill()
 	self.stopped = true
 
-	dirSeparatorIndex := strings.LastIndex(self.logFile, "/")
+	dirSeparatorIndex := strings.LastIndex(self.logFilePath, "/")
 	if dirSeparatorIndex != -1 {
-		logDir := self.logFile[0:dirSeparatorIndex]
+		logDir := self.logFilePath[0:dirSeparatorIndex]
 		os.MkdirAll(logDir, os.ModeDir|os.ModePerm)
 	}
-	return ioutil.WriteFile(self.logFile, <-self.output, os.ModePerm)
+	return ioutil.WriteFile(self.logFilePath, <-self.output, os.ModePerm)
 }
 
-func New(logFile string, name string, arg ...string) (*Testd, error) {
+// New creates a new testd instance. It will call exec.Command using the
+// given name and arg and start the daemon.
+// All logs (stdout and stderr) of the daemon will be saved at the given logFilePath.
+// If a directory on logFilePath does not exist, it will attempt to
+// create the directory for you.
+// You must always call Testd.Stop, even when you know that the daemon already exited for some reason.
+func New(logFilePath string, name string, arg ...string) (*Testd, error) {
 	self := Testd{
-		output:  make(chan []byte),
-		daemon:  exec.Command(name, arg...),
-		logFile: logFile,
-		stopped: false,
+		output:      make(chan []byte),
+		daemon:      exec.Command(name, arg...),
+		logFilePath: logFilePath,
+		stopped:     false,
 	}
 
 	stdout, err := self.daemon.StdoutPipe()
