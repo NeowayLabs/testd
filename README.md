@@ -33,4 +33,4 @@ With **testd** you will be able to chose where to save the logs.
 
 ## How to use it ?
 
-[Checkout the godocs documentation](TODO).
+[Checkout the godocs documentation](https://godoc.org/github.com/NeowayLabs/testd).
