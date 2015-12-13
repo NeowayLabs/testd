@@ -1,10 +1,10 @@
 # testd
 
-It is a library that makes easier to write integration tests that depends on runnings daemons/services.
+It is a library that makes easier to write blackbox tests on daemons/services.
 
 If you are thinking about unit tests, this library will not help you with that.
 They are a good idea on a lot of cases, and it is not on scope of this document to
-argue about when it is better to write integration tests, instead of unit tests.
+argue about when it is better to write integration/blackbox tests, instead of unit tests.
 
 When you found yourself needing to write integration tests, then you will need some stuff:
 
